@@ -1,53 +1,46 @@
 def eh_decimal_simples(texto):
     """
-    Verifica se texto é um número decimal positivo com no máximo um ponto,
-    sem usar split nem count.
-    Retorna True se for válido, False caso contrário.
+    Verifica se texto é um número decimal positivo com no máximo um ponto.
+    Retorna True se for válido, False se não.
     """
-    ponto_encontrado = False  # Flag para controlar se já encontrou um ponto
-    if len(texto) == 0:       # String vazia não é número válido
+    ponto_encontrado = False
+    if len(texto) == 0:
         return False
     for c in texto:
         if c == '.':
             if ponto_encontrado:
-                # Se já encontrou um ponto antes, não pode ter outro
                 return False
             ponto_encontrado = True
         elif not c.isnumeric():
-            # Se encontrar caractere que não seja número nem ponto, inválido
             return False
-    return True  # Passou por todas as verificações, é um número decimal válido
+    return True
 
 def validar_entrada(nome, minimo, maximo):
     """
     Solicita repetidamente um valor ao usuário até que seja um número decimal válido
-    e esteja dentro do intervalo definido por minimo e maximo.
-    Retorna o valor convertido para float.
+    e esteja dentro do intervalo definido.
     """
     while True:
-        valor = input(f"{nome}: ")  # Solicita entrada do usuário
+        valor = input(f"{nome}: ")
 
         if not eh_decimal_simples(valor):
-            # Se a entrada não for número decimal válido, avisa e pede de novo
             print(f"[ERRO] {nome} deve ser um número positivo (ex: 23.5)")
             continue
         
-        val = float(valor)  # Converte a string para float
+        val = float(valor)
 
         if val < minimo or val > maximo:
-            # Se o valor estiver fora do intervalo permitido, avisa e pede de novo
             print(f"[ERRO] {nome} deve estar entre {minimo} e {maximo}")
             continue
         
-        return val  # Valor válido e dentro do intervalo, retorna
+        return val
 
 def classificar_nivel(nivel_rio):
     """
-    Classifica o nível do rio em três categorias:
+    Classifica o nível do rio em:
     - Alerta máximo: nível >= 200 cm
     - Alerta: nível >= 100 cm e < 200 cm
     - Seguro: nível < 100 cm
-    Retorna uma string com o status.
     """
     if nivel_rio >= 200:
         return "🔴 Alerta máximo"
@@ -56,28 +49,30 @@ def classificar_nivel(nivel_rio):
     else:
         return "🟢 Seguro"
 
-def processar_dados(nivel, umid):
+def processar_dados(nivel, umid, temp):
     """
-    Recebe o nível do rio e umidade, classifica o nível,
-    e exibe uma análise formatada para o usuário.
+    Recebe o nível do rio, umidade e temperatura,
+    classifica o nível e exibe análise formatada.
     """
-    status = classificar_nivel(nivel)  # Obtém status do nível
+    status = classificar_nivel(nivel)
     print("\n📊 Análise de Risco:")
-    print(f"Nível: {nivel:.1f} cm - {status}")  # Exibe nível com 1 casa decimal e status
-    print(f"Umidade: {umid:.1f} %")             # Exibe umidade com 1 casa decimal
+    print(f"Nível: {nivel:.1f} cm - {status}")
+    print(f"Umidade: {umid:.1f} %")
+    print(f"Temperatura: {temp:.1f} °C")
 
 def receber_dados():
     """
-    Função principal do programa.
-    Solicita os dados ao usuário, valida as entradas,
-    e chama a função para processar e mostrar o resultado.
+    Função principal.
+    Solicita nível, umidade e temperatura,
+    e mostra o resultado final.
     """
     print("Digite os dados coletados do sensor:")
     
-    nivel_ok = validar_entrada("Nível do rio (cm)", 0, 300)  # Solicita e valida nível do rio
-    umid_ok = validar_entrada("Umidade (%)", 0, 100)        # Solicita e valida umidade
+    nivel_ok = validar_entrada("Nível do rio (cm)", 0, 300)
+    umid_ok = validar_entrada("Umidade (%)", 0, 100)
+    temp_ok = validar_entrada("Temperatura (°C)", -20, 60)  # Limites típicos do DHT22
 
-    processar_dados(nivel_ok, umid_ok)  # Exibe análise com os dados válidos
+    processar_dados(nivel_ok, umid_ok, temp_ok)
 
-# Início do programa: chama a função principal para rodar
+# Início do programa
 receber_dados()
